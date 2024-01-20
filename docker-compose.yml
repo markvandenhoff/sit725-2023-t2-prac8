@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  # MongoDB Service
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    ports: 
+      - 2717:27017
+    volumes:
+      - mongo_db:/data/db
+
+  #Node Server
+  api:
+    build: .
+    ports:
+      - 4000:4000
+    environment: 
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo_db:27017
+      DB_NAME: CyberWebsite
+      NAME: Prac8
+    depends_on:
+      - mongo_db
+  
+  #Python Script
+  python:
+    build: ./python_scripts
+    ports: 
+      - 5000:5000
+    environment: 
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo_db:27017
+      DB_NAME: CyberWebsite
+      NAME: PythonScript
+    depends_on:
+      - mongo_db
+    
+
+volumes:
+  mongo_db: {}
